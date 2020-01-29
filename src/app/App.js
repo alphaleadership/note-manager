@@ -10,19 +10,69 @@ export default (()=>{
     const content = document.getElementById('content')
 
     pin.addEventListener('click', event => {
-        notes.appendChild(makeNote({
-            title: title.value,
-            content: content.value
-        }))
+
+        const note = {
+            title: title.value.trim(),
+            content: content.value.trim()
+        }
+
+        notes.appendChild(makeNote(note))
+        localStorage.setItem(JSON.stringify(note),JSON.stringify(note))
+
+        title.value = ''
+        content.value = ''
     })
 
     reset.addEventListener('click', event => {
+
+        localStorage.clear()
+
         while(notes.firstChild){
             notes.firstChild.remove()
         }
     })
 
+    notes.addEventListener('click', event => {
+
+        if(event.target.innerHTML === '❌'){
+
+            const $note = event.target.parentElement.parentElement.parentElement
+            const note = noteToJSON($note)
+
+            localStorage.removeItem(JSON.stringify(note))
+            note.remove()
+
+        }else if(event.target.innerHTML === '✏️'){
+
+            const $note = event.target.parentElement.parentElement.parentElement
+            const note = noteToJSON($note)
+
+            title.value = note.title
+            content.value = note.value
+
+            localStorage.removeItem(JSON.stringify(note))
+            note.remove()
+        }
+    })
+
+    setTimeout(()=>{
+        for(let i=0; i<localStorage.length; i++){
+            if(localStorage.key(i).includes('webpack')) continue
+            const note = JSON.parse(localStorage.key(i))
+            notes.appendChild(makeNote(note))
+        }
+    },1000)
+
+    
+
 })()
+
+function noteToJSON( $note ){
+    return {
+        title: $note.querySelector('.title').innerHTML.trim(),
+        content: $note.querySelector('.content').innerHTML.trim()
+    }
+}
 
 function makeNote( note ){
     const $note = document.createElement('div')
@@ -37,7 +87,7 @@ function makeNote( note ){
         </div>
         <div class="body">
             <h2 class="title"> ${note.title} </h2>
-            <p class="content"><pre>${note.content}</pre></p>
+            <pre class="content">${note.content}</pre>
         </div>
     `
     return $note

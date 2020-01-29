@@ -1,2 +1,2 @@
 
-import app from './app/App'
+import './app/App'
