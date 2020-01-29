@@ -1,7 +1,7 @@
 
 import '../assets/scss/index.scss'
 
-export default (async()=>{
+export default (()=>{
 
     const notes = document.getElementById('notes')
     const reset = document.getElementById('reset')
@@ -10,11 +10,10 @@ export default (async()=>{
     const content = document.getElementById('content')
 
     pin.addEventListener('click', event => {
-        const note = {
+        notes.appendChild(makeNote({
             title: title.value,
             content: content.value
-        }
-        notes.appendChild(makeNote(note))
+        }))
     })
 
     reset.addEventListener('click', event => {
